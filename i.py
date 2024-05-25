@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -15,22 +14,24 @@ threshold = 0.8
 # Create an empty directed graph
 G = nx.DiGraph()
 
-# Add nodes
-for node in correlation_matrix.columns:
-    G.add_node(node)
+# Initialize a set to keep track of visited nodes
+visited = set()
 
-# Add edges based on closest correlation for each feature
+# Add nodes and edges based on the closest correlation for each feature
 for i in correlation_matrix.columns:
-    closest_feature = None
-    max_corr = threshold
-    
-    for j in correlation_matrix.columns:
-        if i != j and abs(correlation_matrix.loc[i, j]) > max_corr:
-            closest_feature = j
-            max_corr = abs(correlation_matrix.loc[i, j])
-    
-    if closest_feature:
-        G.add_edge(i, closest_feature, weight=correlation_matrix.loc[i, closest_feature])
+    if i not in visited:
+        closest_feature = None
+        max_corr = threshold
+        
+        for j in correlation_matrix.columns:
+            if i != j and abs(correlation_matrix.loc[i, j]) > max_corr:
+                closest_feature = j
+                max_corr = abs(correlation_matrix.loc[i, j])
+        
+        if closest_feature:
+            G.add_edge(i, closest_feature, weight=correlation_matrix.loc[i, closest_feature])
+            visited.add(i)
+            visited.add(closest_feature)
 
 # Draw the graph
 plt.figure(figsize=(14, 12))
