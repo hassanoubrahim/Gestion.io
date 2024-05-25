@@ -21,10 +21,25 @@ nx.draw_networkx(G, pos, with_labels=True, node_size=7000, node_color='lightblue
 plt.title('Network of Correlated Features')
 plt.show()
 
-# Add directed edges between highly correlated nodes only
-for i in corr_matrix.columns:
-    for j in corr_matrix.index:
-        if i != j and abs(corr_matrix.loc[i, j]) > threshold:
-            # Directing edge from lower indexed feature to higher indexed feature for simplicity
-            if corr_matrix.columns.get_loc(i) < corr_matrix.columns.get_loc(j):
-                G.add_edge(i, j, weight=corr_matrix.loc[i, j])
+# Define the correlation threshold
+threshold = 0.8
+
+# Create an empty directed graph
+G = nx.DiGraph()
+
+# Add nodes
+for node in correlation_matrix.columns:
+    G.add_node(node)
+
+# Add edges based on closest correlation for each feature
+for i in correlation_matrix.columns:
+    closest_feature = None
+    max_corr = threshold
+    
+    for j in correlation_matrix.columns:
+        if i != j and abs(correlation_matrix.loc[i, j]) > max_corr:
+            closest_feature = j
+            max_corr = abs(correlation_matrix.loc[i, j])
+    
+    if closest_feature:
+        G.add_edge(i, closest_feature, weight=correlation_matrix.loc[i, closest_feature])
