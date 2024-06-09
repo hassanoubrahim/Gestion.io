@@ -1,7 +1,6 @@
-%%time
-from sklearn.model_selection import train_test_split
+]from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import pandas as pd
 
@@ -9,15 +8,15 @@ import pandas as pd
 X, y = df_merged.loc[:, f_features[1:]], pd.factorize(df_merged["Drug"])[0]  # Assuming 'Drug' is the target column
 
 # Split the data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 # Scale the data
 scaler = StandardScaler()
-#X_train = scaler.fit_transform(X_train)
-#X_test = scaler.transform(X_test)
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
 # Build the model
-model = SVC(kernel='linear', random_state=42)
+model = RandomForestClassifier(random_state=42)
 
 # Train the model
 model.fit(X_train, y_train)
