@@ -1,3 +1,14 @@
+df150_cols = df150.columns
+df_cols = df.columns
+f_features = df_cols.copy()  # Make a copy to avoid modifying the original list during iteration
+
+for col2 in df_cols:
+    for col1 in df150_cols:
+        if col1.split(" ")[-1] == col2.split(".")[-1]:
+            f_features = [col for col in f_features if col != col2]
+            break  # Exit the inner loop once a match is found to avoid redundant checks
+
+
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
